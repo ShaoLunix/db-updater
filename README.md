@@ -1,4 +1,4 @@
-# DB-UPDATER
+# db-updater
 
 *** README ***
 
