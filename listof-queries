@@ -1,0 +1,24 @@
+# Explanation
+# Commented texts are not interpreted by the script.
+# The ; symbol is a separator.
+# If an element (condition, order or limitation) is empty (nothing or "" or '')
+# then it isnot included in the query
+# To get an value auto-incremented, just write NULL
+# A SQL function can be used as a value
+#
+# Below are the models :
+# SELECT;tablename;condition;columns;`column` ASC|DESC;limitation
+# INSERT;tablename;values;
+# UPDATE;tablename;condition;new values;limitation
+# DELETE;tablename;condition;limitation
+#
+# Below are some examples :
+# SELECT;Person;Age=25;id,FirstName,LastName,Age;`LastName` ASC;10
+# => Display the id,first name and last name of 10 entries from the table "Person"
+#    aged 25 asciently ordened by their last name.
+#
+# UPDATE;Article;Reference="0007452012";Manufacturer="Toys are freedom",Category="Cards";1
+# => Update the manufacturer field of the article referenced "0007452012" with
+#    the value "Toys are freedom" and the category with the value "Cards".
+#    This update applies only to the 1st occurrence found.
+
