@@ -9,7 +9,7 @@
 # declared in the main script's general configuration file.
 #
 # Versions
-# [2019-12-07] [1.0.1] [Stéphane-Hervé] Updated version
+# [2019-12-07] [1.0.1] [Stéphane-Hervé] Minor correction
 # [2019-09-02] [1.0] [Stéphane-Hervé] First version
 #==============================================================================#
 # strict mode
@@ -21,7 +21,7 @@ set -o nounset
 . "$configuration_file"
 
 #=== THIS SCRIPT DETAILS
-VER=1.0.0
+VER=1.0.1
 myscript="storepass"
 myproject="db-uploader"
 mycontact="https://github.com/ShaoLunix/$myproject/issues"

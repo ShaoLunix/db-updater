@@ -9,6 +9,7 @@
 # to connect to it and do it manually.
 #
 # Versions
+# [2020-02-28] [1.0.1] [Stéphane-Hervé] SSH tunnel fixed
 # [2019-12-07] [1.0.0] [Stéphane-Hervé] First version
 #==============================================================================#
 # strict mode
@@ -16,7 +17,7 @@ set -o nounset
 
 
 #=== THIS SCRIPT DETAILS
-VER=1.0.0
+VER=1.0.1
 myscript="db-updater"
 myproject="$myscript"
 mycontact="https://github.com/ShaoLunix/$myproject/issues"
@@ -52,7 +53,7 @@ missingcommands=""
 
 # Params
 script_configfile="db-updater.conf"
-list_of_queries="listof-queries"
+list_of_queries="listof-queries-tobe-sent"
 backup="off"
 isbackup=false
 sourcetype=""
@@ -348,14 +349,6 @@ fi
 #===========#
 # EXECUTION #
 #===========#
-# Establishing a SSH tunnel
-sshpass -p"$decryptedssh_pass" \
-        ssh -o 'ControlMaster=no,ControlPath=no' \
-            -$IP_version \
-            -N -L $tunnel_listening_port:$localhost:$db_listening_port \
-            -p $ssh_port \
-            "$ssh_login@$remote_server" &
-
 #*** READING QUERIES TO BE SENT
 while read line
 do
@@ -413,15 +406,27 @@ done < "$list_of_queries"
 
 clear
 
+# Establishing a SSH tunnel
+sshpass -p"${decryptedssh_pass}" \
+        ssh -f -N -L "${tunnel_listening_port}":"${localhost}":"${db_listening_port}" \
+            -p "${ssh_port}" \
+            -${IP_version} \
+            "${ssh_login}"@"${remote_server}" \
+            -o 'ControlMaster=no' -o 'ControlPath=no' &
+
+sleep 3
+
 # Connecting and querying to the database
-sshpass -p"$decryptedssh_pass" \
-        mysql -u "$db_login" -p$decrypteddb_pass --port "$tunnel_listening_port" -h "$localhost" -D "$db_name" \
-                -e "$SQLqueries;"
+mysql -v -v -v \
+        --protocol=TCP --host="${localhost}" --port="${tunnel_listening_port}" \
+        -u "${db_login}" -p${decrypteddb_pass} \
+        -D "${db_name}" \
+        -e "${SQLqueries}"
 
 # Print the total number of queries
 echo "$counter queries were sent."
 
 # Unbinding the SSH connection
-ssh -O cancel -L $tunnel_listening_port:$localhost:$db_listening_port "$remote_server"
+ssh -O cancel -L "${tunnel_listening_port}":"${localhost}":"${db_listening_port}" "${remote_server}"
 
 exit 0
